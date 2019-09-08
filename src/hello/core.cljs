@@ -1,10 +1,13 @@
-(ns hello.core
-  (:require [hello.gtk :as gtk :refer [show]]))
+(ns hello.core)
 
-(gtk/init nil 0)
+(set! (.-Gtk js/imports.gi.versions) "3.0")
 
-(let [w (gtk/window {:type :toplevel
-                     :title "Hello ClojureScript!"
-                     :on-destroy gtk/main-quit})]
-  (show w)
-  (gtk/main))
+(def Gtk (.. js/imports -gi -Gtk))
+(def toplevel (.. Gtk -WindowType -TOPLEVEL))
+
+(.init Gtk nil)
+(let [window (Gtk.Window. #js {:type toplevel})]
+  (set! (.-title window) "Hello ClojureScript!")
+  (.connect window "destroy" #(.main_quit Gtk))
+  (.show window)
+  (.main Gtk))
